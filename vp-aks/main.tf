@@ -21,17 +21,17 @@ resource "azurerm_subnet" "aks-subnet" {
   address_prefixes = ["10.0.7.0/24"]
 }
 
-module "aks" {
-  source                              = "../.."
-  prefix                              = "prefix-${random_id.prefix.hex}"
-  resource_group_name                 = azurerm_resource_group.aks.name
-  client_id                           = var.client_id
-  client_secret                       = var.client_secret
-  vnet_subnet_id                      = azurerm_subnet.aks-subnet.id
-  os_disk_size_gb                     = 60
-  enable_azure_policy                 = true
-  sku_tier                            = "Paid"
-  enable_kube_dashboard               = true
-  depends_on                          = [azurerm_resource_group.aks]
 
+module aks {
+    source                          = "../.."
+    prefix                          = "prefix-${random_id.prefix.hex}"
+    resource_group_name             = azurerm_resource_group.aks.name
+    client_id                       = var.client_id
+    client_secret                   = var.client_secret
+    vnet_subnet_id                  = azurerm_subnet.aks-subnet.id
+    os_disk_size_gb                 = 60
+    enable_azure_policy             = true
+    sku_tier                        = "Paid"
+    enable_kube_dashboard           = true
+    depends_on                      = [azurerm_resource_group.aks]
 }
