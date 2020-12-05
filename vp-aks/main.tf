@@ -21,13 +21,27 @@ resource "azurerm_subnet" "aks-subnet" {
   address_prefixes = ["10.0.7.0/24"]
 }
 
+data "azurerm_key_vault" "existing" {
+  name                  =     var.keyvault-name
+  resource_group_name   =     var.keyvault-rg
+}
+
+data "azurerm_key_vault_secret" "aks-id" {
+  name                  =  var.aks-spn-id
+  key_vault_id          =  data.azurerm_key_vault.existing.id
+}
+
+data "azurerm_key_vault_secret" "aks-pass" {
+  name                  =  var.aks-spn-pass
+  key_vault_id          =  data.azurerm_key_vault.existing.id
+}
 
 module aks {
-    source                          = "../.."
+    source                          = "../"
     prefix                          = "prefix-${random_id.prefix.hex}"
     resource_group_name             = azurerm_resource_group.aks.name
-    client_id                       = var.client_id
-    client_secret                   = var.client_secret
+    client_id                       = data.azurerm_key_vault_secret.aks-id.value
+    client_secret                   = data.azurerm_key_vault_secret.aks-pass.value
     vnet_subnet_id                  = azurerm_subnet.aks-subnet.id
     os_disk_size_gb                 = 60
     enable_azure_policy             = true
