@@ -22,6 +22,9 @@ variable "keyvault-rg" {
   default = "VP-KV"
 }
 
+variable "aks-subnet-name" {
+}
+
 variable "ARM_CLIENT_ID" {}
 
 variable "ARM_CLIENT_SECRET" {}
