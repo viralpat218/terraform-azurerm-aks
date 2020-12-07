@@ -61,7 +61,7 @@ module aks {
     enable_role_based_access_control  = true
     rbac_aad_client_app_id            = data.azurerm_key_vault_secret.aks-client-id.value
     rbac_aad_server_app_id            = data.azurerm_key_vault_secret.aks-server-id.value
-    rbac_aad_server_app_secret        = data.azurerm_key_vault_secret.aks-server-pass
+    rbac_aad_server_app_secret        = data.azurerm_key_vault_secret.aks-server-pass.value
     rbac_aad_admin_group_object_ids   = [data.azuread_group.aks-group.id]
     depends_on                        = [azurerm_resource_group.aks]
 }
