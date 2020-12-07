@@ -3,7 +3,7 @@ variable "aks-vnet-rg" {
 }
 
 variable "vnet-name" {
-  default = "vp-net"
+  default = "vp-aks"
 }
 
 variable "aks-spn-id" {
@@ -23,6 +23,22 @@ variable "keyvault-rg" {
 }
 
 variable "aks-subnet-name" {
+}
+
+variable "service_cidr" {
+  default = "10.0.8.0/24"
+}
+
+variable "client_app_id" {
+  default = "client-server-id"
+}
+
+variable "server_app_id" {
+  default = "aks-server-id"
+}
+
+variable "server_app_secret" {
+  default = "aks-server-secret"
 }
 
 variable "ARM_CLIENT_ID" {}

@@ -28,16 +28,40 @@ data "azurerm_key_vault_secret" "aks-pass" {
   key_vault_id          =  data.azurerm_key_vault.existing.id
 }
 
+data "azurerm_key_vault_secret" "aks-server-id" {
+  name                  =  var.server_app_id
+  key_vault_id          =  data.azurerm_key_vault.existing.id
+}
+
+data "azurerm_key_vault_secret" "aks-server-pass" {
+  name                  =  var.server_app_secret
+  key_vault_id          =  data.azurerm_key_vault.existing.id
+}
+
+data "azurerm_key_vault_secret" "aks-client-id" {
+  name                  =  var.client_app_id
+  key_vault_id          =  data.azurerm_key_vault.existing.id
+}
+
+data "azuread_group" "aks-group" {
+  name = "AKS-cluster-admins"
+}
+
 module aks {
-    source                          = "../"
-    prefix                          = "prefix-${random_id.prefix.hex}"
-    resource_group_name             = azurerm_resource_group.aks.name
-    client_id                       = data.azurerm_key_vault_secret.aks-id.value
-    client_secret                   = data.azurerm_key_vault_secret.aks-pass.value
-    vnet_subnet_id                  = data.azurerm_subnet.aks-subnet.id
-    os_disk_size_gb                 = 60
-    enable_azure_policy             = true
-    sku_tier                        = "Paid"
-    enable_kube_dashboard           = true
-    depends_on                      = [azurerm_resource_group.aks]
+    source                            = "../"
+    prefix                            = "prefix-${random_id.prefix.hex}"
+    resource_group_name               = azurerm_resource_group.aks.name
+    client_id                         = data.azurerm_key_vault_secret.aks-id.value
+    client_secret                     = data.azurerm_key_vault_secret.aks-pass.value
+    vnet_subnet_id                    = data.azurerm_subnet.aks-subnet.id
+    os_disk_size_gb                   = 60
+    enable_azure_policy               = true
+    sku_tier                          = "Paid"
+    enable_kube_dashboard             = true
+    enable_role_based_access_control  = true
+    rbac_aad_client_app_id            = data.azurerm_key_vault_secret.aks-client-id.value
+    rbac_aad_server_app_id            = data.azurerm_key_vault_secret.aks-server-id.value
+    rbac_aad_server_app_secret        = data.azurerm_key_vault_secret.aks-server-pass
+    rbac_aad_admin_group_object_ids   = [data.azuread_group.aks-group.id]
+    depends_on                        = [azurerm_resource_group.aks]
 }
